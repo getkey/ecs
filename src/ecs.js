@@ -44,6 +44,14 @@ class ECS {
     this.systems = [];
 
     /**
+     * Store all queries of the ECS.
+     *
+     * @property queries
+     * @type {Array}
+     */
+    this.queries = [];
+
+    /**
      * Count how many updates have been done.
      *
      * @property updateCounter
@@ -194,6 +202,36 @@ class ECS {
     // jshint maxdepth: 3
 
     this.entitiesSystemsDirty = [];
+  }
+  /**
+   * Add a system to the ecs.
+   *
+   * @method addQuery
+   * @param {Query} query query to add
+   */
+  addQuery(query) {
+    this.queries.push(query);
+
+    // iterate over all entities to eventually add system
+    for (let i = 0, entity; entity = this.entities[i]; i += 1) {
+      if (query.test(entity)) {
+        query.addEntity(entity);
+      }
+    }
+  }
+  /**
+   * Remove a system from the ecs.
+   *
+   * @method removeQuery
+   * @param  {Query} query query reference
+   */
+  removeQuery(query) {
+    let index = this.query.indexOf(query);
+
+    if (index !== -1) {
+      fastSplice(this.query, index, 1);
+      query.dispose();
+    }
   }
   /**
    * Update the ecs.
