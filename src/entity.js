@@ -20,9 +20,9 @@ class Entity {
    * it to generate a new id. If nothing is passed, the entity will use
    * the default UIDGenerator.
    *
-   * @param {Array[Component]} [components=[]] An array of initial components.
+   * @param {Object} [components={}] An object of initial components.
    */
-  constructor(idOrUidGenerator, components = []) {
+  constructor(idOrUidGenerator, components = {}) {
     /**
      * Unique identifier of the entity.
      *
@@ -65,22 +65,7 @@ class Entity {
      *
      * @property {Object} components
      */
-    this.components = {};
-
-    // components initialisation
-    for (let i = 0, component; component = components[i]; i += 1) {
-      // if a getDefaults method is provided, use it. First because let the
-      // runtime allocate the component is way more faster than using a copy
-      // function. Secondly because the user may want to provide some kind
-      // of logic in components initialisation ALTHOUGH these kind of
-      // initialisation should be done in enter() handler
-      if (component.getDefaults) {
-        this.components[component.name] = component.getDefaults();
-      } else {
-        this.components[component.name] = Object.assign({},
-          components[i].defaults);
-      }
-    }
+    this.components = components;
 
     /**
      * A reference to parent ECS class.
